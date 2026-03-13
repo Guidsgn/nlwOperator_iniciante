@@ -89,8 +89,8 @@ const configMyWidget = {
 const myWidget = cloudinary.createUploadWidget(configMyWidget, async (error, result) => {
     if (!error && result && result.event === "success") {
         console.log('Pronto! Aqui estão as informações da imagem: ', result.info);
-        app2.public_id = result.info.public_id
-        app2.version = result.info.version
+        app.public_id = result.info.public_id
+        app.version = result.info.version
         const isReady = await app.waitForTranscription()
     }
 }
