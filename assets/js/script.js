@@ -1,14 +1,40 @@
 const app = {
     transcriptionURL: '',
     public_id: '',
-    waitForTranscription: () => {
-        // Preciso de um polling para saber se a transcrição está pronta
-        // Tente 30 vezes
-        // A URL de exemplo é essa
-        // https://res.cloudinary.com/dydnihvz4/raw/upload/v1773420414/rcjplsku77s9w6vbjjxy.transcript
-        // dydnihvz4 essa é a configMyWidget.cloudName
-        // v1773420414 esse é v${Date.now()}
-        // rcjplsku77s9w6vbjjxy esse é o app.public_id
+    version: null,
+    waitForTranscription: async ({ maxAttempts = 30, intervalMs = 2000, timeoutMs = 8000 } = {}) => {
+        const cloudName = configMyWidget.cloudName
+        const publicId = app.public_id
+        const version = app.version ?? Date.now()
+
+        if (!cloudName) throw new Error('cloudName não configurado')
+        if (!publicId) throw new Error('public_id não definido')
+
+        const transcriptionURL = `https://res.cloudinary.com/${cloudName}/raw/upload/v${version}/${publicId}.transcript`
+        app.transcriptionURL = transcriptionURL
+
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                const controller = new AbortController()
+                const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
+                const response = await fetch(transcriptionURL, {
+                    method: 'HEAD',
+                    cache: 'no-store',
+                    signal: controller.signal
+                })
+
+                clearTimeout(timeoutId)
+
+                if (response.ok) return transcriptionURL
+            } catch (_) {}
+
+            await sleep(intervalMs)
+        }
+
+        throw new Error('Transcrição ainda não ficou pronta')
     },
     getTranscription: () => {},
     getViralMoment: () => {}
@@ -23,6 +49,7 @@ const myWidget = cloudinary.createUploadWidget(configMyWidget, (error, result) =
     if (!error && result && result.event === "success") {
         console.log('Pronto! Aqui estão as informações da imagem: ', result.info);
         app.public_id = result.info.public_id
+        app.version = result.info.version
 
         Toastify({
             text: "Vídeo processado com sucesso!",
