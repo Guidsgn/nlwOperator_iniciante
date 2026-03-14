@@ -36,6 +36,9 @@ const app = {
     },
     getViralMoment: async () => {
         const transcription = await app.getTranscription()
+
+        const geminiModel = 'gemini-3-flash-preview'
+        const endpointGemini = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`
     },
 }
 
@@ -82,8 +85,8 @@ const app = {
 // }
 
 const configMyWidget = {
-    cloudName: 'dydnihvz4',
-    uploadPreset: 'upload_nlw'
+    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,  // Agora pega da caixa secreta do Vercel
+    uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 }
 
 const myWidget = cloudinary.createUploadWidget(configMyWidget, async (error, result) => {
