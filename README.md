@@ -27,6 +27,20 @@ A interface permite visualizar o clipe selecionado em tempo real.
 - JavaScript
 - Cloudinary
 - Gemini AI
+- Node.js (para o servidor backend)
+
+## 🚀 Como executar
+
+1. Clone o repositório
+2. Instale as dependências: `npm install`
+3. Configure as variáveis de ambiente no arquivo `.env` (veja `.env.example` se existir)
+4. Execute o servidor: `npm run server`
+5. Em outro terminal, execute o frontend: `npm run dev`
+6. Abra o navegador em `http://localhost:5173` (ou a porta do Vite)
+
+## 🔒 Segurança da API
+
+A chave da API do Gemini é mantida segura no lado do servidor para evitar exposição no cliente.
 
 ## 👨‍💻 Autor
 
