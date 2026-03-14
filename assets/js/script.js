@@ -66,7 +66,7 @@ const app = { // App do Mayk
         `
 
         const headers = {
-            'x-goog-api-key': import.meta.env.VITE_GOOGLE_API_KEY,
+            'x-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY,
             'Content-Type': 'application/json'
         }
         const contents = [
@@ -78,14 +78,36 @@ const app = { // App do Mayk
                 ]
             }
         ]
-        const response = await fetch(endpointGemini, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ contents })
-        })
 
-        const data = await response.json()
-        console.log({ data })
+        const maxRetries = 3;
+        let attempt = 0;
+
+        while (attempt < maxRetries) {
+            try {
+                const response = await fetch(endpointGemini, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ contents })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const rawText = data.candidates[0].content.parts[0].text
+
+                // Retornar o texto da resposta
+                return rawText.replace(/```/g, '').replace(/json/g, "").trim
+            } catch (error) {
+                attempt++;
+                if (attempt >= maxRetries) {
+                    throw error;
+                }
+                console.log(`Tentativa ${attempt} falhou: ${error.message}. Tentando novamente em ${attempt} segundos...`);
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            }
+        }
     },
 }
 
@@ -149,6 +171,7 @@ const myWidget = cloudinary.createUploadWidget(configMyWidget, async (error, res
             }
 
             const viralMoment = await app.getViralMoment()
+            const viralMomentURL = `https://res.cloudinary.com/${configMyWidget.cloudName}/video/upload/${viralMoment}/${app.public_id}.mp4`
 
         } catch (error) {
             console.log({ error })
