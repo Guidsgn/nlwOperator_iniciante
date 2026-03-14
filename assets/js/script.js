@@ -46,7 +46,7 @@ const app = { // App do Mayk
     getViralMoment: async () => {
         const transcription = await app.getTranscription();
 
-        const response = await fetch('http://localhost:3001/get-viral-moment', {
+        const response = await fetch('/api/get-viral-moment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

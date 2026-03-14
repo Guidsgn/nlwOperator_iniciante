@@ -38,9 +38,19 @@ A interface permite visualizar o clipe selecionado em tempo real.
 5. Em outro terminal, execute o frontend: `npm run dev`
 6. Abra o navegador em `http://localhost:5173` (ou a porta do Vite)
 
+## 🌐 Deploy no Vercel
+
+1. Faça push do código para o GitHub
+2. Conecte o repositório no Vercel
+3. Configure as variáveis de ambiente no dashboard do Vercel:
+   - `GEMINI_API_KEY`: Sua chave da API Gemini
+   - `VITE_CLOUDINARY_CLOUD_NAME`: Nome do cloud do Cloudinary
+   - `VITE_CLOUDINARY_UPLOAD_PRESET`: Preset de upload do Cloudinary
+4. O Vercel detectará automaticamente o `vercel.json` e fará o deploy
+
 ## 🔒 Segurança da API
 
-A chave da API do Gemini é mantida segura no lado do servidor para evitar exposição no cliente.
+A chave da API do Gemini é mantida segura no lado do servidor/serverless para evitar exposição no cliente.
 
 ## 👨‍💻 Autor
 
